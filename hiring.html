@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Virtual Purchaser - Digital Earnings Portal</title>
+    <title>Virtual Purchaser - Hiring Portal</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -82,6 +82,18 @@
         .modal-box .btn-close-modal:hover {
             background: #1e3a8a;
         }
+        /* Loading Spinner for button */
+        .btn-loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        .btn-loading i {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 min-h-screen py-6 px-4 md:py-12">
@@ -95,7 +107,7 @@
             <h3>🎉 Application Submitted!</h3>
             <p>
                 Thank you for applying to become a Virtual Purchaser!<br />
-                Our onboarding team will review your details and reach out via Email / SMS with the next steps.
+                Our hiring team will review your details and reach out via Email / SMS with the next steps.
             </p>
             <button class="btn-close-modal" onclick="closeModal()">
                 Got it! <i class="fa-solid fa-arrow-right ml-2"></i>
@@ -112,26 +124,106 @@
                         VP
                     </div>
                     <div>
-                        <span class="text-xs font-bold tracking-widest text-blue-400 uppercase">Career Opportunity</span>
+                        <span class="text-xs font-bold tracking-widest text-blue-400 uppercase">We Are Hiring!</span>
                         <h1 class="text-2xl font-extrabold tracking-tight">VIRTUAL PURCHASER</h1>
                     </div>
                 </div>
 
                 <nav class="flex p-1.5 bg-slate-800/80 rounded-2xl border border-slate-700/50 w-full md:w-auto">
-                    <button id="portal-about-btn" onclick="switchPortal('about')" 
-                        class="flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 tab-active">
-                        <i class="fa-solid font-bold fa-circle-info"></i> Portal 1: About Us
-                    </button>
                     <button id="portal-apply-btn" onclick="switchPortal('apply')" 
+                        class="flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 tab-active">
+                        <i class="fa-solid font-bold fa-paper-plane"></i> Apply Now
+                    </button>
+                    <button id="portal-about-btn" onclick="switchPortal('about')" 
                         class="flex-1 md:flex-none px-6 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 flex items-center justify-center gap-2 tab-inactive">
-                        <i class="fa-solid font-bold fa-paper-plane"></i> Portal 2: Apply Now
+                        <i class="fa-solid font-bold fa-circle-info"></i> About Us
                     </button>
                 </nav>
             </div>
         </header>
 
-        <!-- ===== PORTAL 1: ABOUT ===== -->
-        <section id="portal-about" class="p-6 md:p-10 space-y-10 block">
+        <!-- ===== PORTAL: APPLY NOW (Default Visible) ===== -->
+        <section id="portal-apply" class="p-6 md:p-10 space-y-8">
+            
+            <div class="border-b pb-4">
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Hiring Form</span>
+                <h2 class="text-2xl font-extrabold text-slate-900">Virtual Purchaser Application</h2>
+                <p class="text-sm text-slate-500 mt-1">Complete your application details below to get started.</p>
+            </div>
+
+            <form id="applicant-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Full Name <span class="text-red-500">*</span></label>
+                        <input type="text" id="fullName" required placeholder="John Doe" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Email Address <span class="text-red-500">*</span></label>
+                        <input type="email" id="email" required placeholder="john@example.com" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Mobile Number <span class="text-red-500">*</span></label>
+                        <input type="tel" id="mobile" required placeholder="09123456789" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Current Location / Province <span class="text-red-500">*</span></label>
+                        <input type="text" id="location" required placeholder="e.g. Cebu, Metro Manila" 
+                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Primary Work Device <span class="text-red-500">*</span></label>
+                        <select id="device" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm bg-white">
+                            <option value="">Select Primary Device</option>
+                            <option value="smartphone">Smartphone (Android/iOS)</option>
+                            <option value="laptop">Laptop Computer</option>
+                            <option value="desktop">Desktop PC</option>
+                            <option value="both">Both Smartphone & PC</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs font-bold text-slate-700 uppercase">Internet Connection <span class="text-red-500">*</span></label>
+                        <select id="internet" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm bg-white">
+                            <option value="">Select Connection Type</option>
+                            <option value="fiber">Fiber / High-Speed Broadband</option>
+                            <option value="4g5g">4G / 5G Mobile Data</option>
+                            <option value="wifi">Shared Wi-Fi</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-bold text-slate-700 uppercase">Why do you want to become a Virtual Purchaser?</label>
+                    <textarea id="reason" rows="3" placeholder="Briefly describe your interest in working online..." 
+                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl shadow-xl shadow-blue-500/30 transition-all text-base flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-paper-plane"></i> SUBMIT APPLICATION
+                </button>
+            </form>
+
+            <div id="form-success" class="hidden p-8 text-center bg-emerald-50 border border-emerald-200 rounded-2xl space-y-3">
+                <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto text-xl">
+                    <i class="fa-solid fa-check"></i>
+                </div>
+                <h3 class="text-xl font-bold text-emerald-900">Application Received!</h3>
+                <p class="text-xs text-emerald-700 max-w-md mx-auto">
+                    Thank you for applying. Our hiring team will review your details and reach out via Email/SMS with the next steps.
+                </p>
+            </div>
+        </section>
+
+        <!-- ===== PORTAL: ABOUT US (Hidden by Default) ===== -->
+        <section id="portal-about" class="p-6 md:p-10 space-y-10 hidden">
             
             <div class="text-center space-y-4 max-w-2xl mx-auto pt-2">
                 <span class="inline-block px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold uppercase tracking-wide">
@@ -327,93 +419,13 @@
                     Become part of the Virtual Purchasing environment and discover how online transactions, digital payments, cashback, rebates, and virtual rewards can work together.
                 </p>
                 <button onclick="switchPortal('apply')" class="px-8 py-3.5 bg-white text-blue-600 font-extrabold rounded-2xl shadow-xl hover:bg-slate-100 transition-all transform hover:-translate-y-0.5">
-                    START YOUR VIRTUAL PURCHASER JOURNEY TODAY
+                    APPLY NOW <i class="fa-solid fa-arrow-right ml-2"></i>
                 </button>
             </div>
 
             <div class="p-4 bg-slate-100 rounded-2xl text-xs text-slate-500 space-y-1">
                 <span class="font-bold text-slate-700 block uppercase">Transparency Notice</span>
                 <p>Virtual earnings, cashback, rebates, and promotional rewards are not guaranteed income. Any percentage shown, including the 200% example, represents a promotional/example scenario and is subject to the actual program rules, eligibility requirements, transaction conditions, limits, and applicable terms.</p>
-            </div>
-        </section>
-
-        <!-- ===== PORTAL 2: APPLY ===== -->
-        <section id="portal-apply" class="p-6 md:p-10 space-y-8 hidden">
-            
-            <div class="border-b pb-4">
-                <span class="text-xs font-bold text-blue-600 uppercase tracking-widest">Onboarding Form</span>
-                <h2 class="text-2xl font-extrabold text-slate-900">Virtual Purchaser Application</h2>
-                <p class="text-sm text-slate-500 mt-1">Complete your application details below to get started.</p>
-            </div>
-
-            <form id="applicant-form" onsubmit="handleFormSubmit(event)" class="space-y-6">
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-700 uppercase">Full Name</label>
-                        <input type="text" id="fullName" required placeholder="John Doe" 
-                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-700 uppercase">Email Address</label>
-                        <input type="email" id="email" required placeholder="john@example.com" 
-                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-700 uppercase">Mobile Number</label>
-                        <input type="tel" id="mobile" required placeholder="09123456789" 
-                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-700 uppercase">Current Location / Province</label>
-                        <input type="text" id="location" required placeholder="e.g. Cebu, Metro Manila" 
-                            class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm">
-                    </div>
-                </div>
-
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-700 uppercase">Primary Work Device</label>
-                        <select id="device" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm bg-white">
-                            <option value="">Select Primary Device</option>
-                            <option value="smartphone">Smartphone (Android/iOS)</option>
-                            <option value="laptop">Laptop Computer</option>
-                            <option value="desktop">Desktop PC</option>
-                            <option value="both">Both Smartphone & PC</option>
-                        </select>
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-700 uppercase">Internet Connection</label>
-                        <select id="internet" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm bg-white">
-                            <option value="">Select Connection Type</option>
-                            <option value="fiber">Fiber / High-Speed Broadband</option>
-                            <option value="4g5g">4G / 5G Mobile Data</option>
-                            <option value="wifi">Shared Wi-Fi</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-700 uppercase">Why do you want to become a Virtual Purchaser?</label>
-                    <textarea id="reason" rows="3" placeholder="Briefly describe your interest in working online..." 
-                        class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-sm"></textarea>
-                </div>
-
-                <button type="submit" id="submitBtn" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-extrabold rounded-2xl shadow-xl shadow-blue-500/30 transition-all text-base">
-                    <i class="fa-solid fa-paper-plane mr-2"></i> SUBMIT APPLICATION
-                </button>
-            </form>
-
-            <div id="form-success" class="hidden p-8 text-center bg-emerald-50 border border-emerald-200 rounded-2xl space-y-3">
-                <div class="w-12 h-12 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto text-xl">
-                    <i class="fa-solid fa-check"></i>
-                </div>
-                <h3 class="text-xl font-bold text-emerald-900">Application Received!</h3>
-                <p class="text-xs text-emerald-700 max-w-md mx-auto">
-                    Thank you for applying. Our onboarding team will review your details and reach out via Email/SMS with the next steps.
-                </p>
             </div>
         </section>
 
@@ -513,6 +525,13 @@
         function handleFormSubmit(e) {
             e.preventDefault();
 
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fa-solid fa-spinner"></i> SUBMITTING...';
+            submitBtn.classList.add('btn-loading');
+
             // Gather form data
             const fullName = document.getElementById('fullName').value.trim();
             const email = document.getElementById('email').value.trim();
@@ -522,22 +541,22 @@
             const internet = document.getElementById('internet').value;
             const reason = document.getElementById('reason').value.trim();
 
-            // Basic validation
-            if (!fullName || !email || !mobile || !location || !device || !internet) {
-                alert('❗ Please fill in all required fields.');
-                return;
-            }
-
             // Mobile validation
             const mobileDigits = mobile.replace(/\D/g, '');
             if (mobileDigits.length !== 11 || !mobileDigits.startsWith('09')) {
                 alert('❗ Please enter a valid 11-digit mobile number starting with 09.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> SUBMIT APPLICATION';
+                submitBtn.classList.remove('btn-loading');
                 return;
             }
 
             // Email validation (simple)
             if (!email.includes('@') || !email.includes('.')) {
                 alert('❗ Please enter a valid email address.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> SUBMIT APPLICATION';
+                submitBtn.classList.remove('btn-loading');
                 return;
             }
 
@@ -554,11 +573,16 @@
             // Send Telegram notification
             sendTelegramNotification(formData);
 
-            // Show success modal
-            showModal();
-
-            // Reset form
-            document.getElementById('applicant-form').reset();
+            // Show success modal after short delay
+            setTimeout(() => {
+                showModal();
+                // Reset form
+                document.getElementById('applicant-form').reset();
+                // Reset button
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> SUBMIT APPLICATION';
+                submitBtn.classList.remove('btn-loading');
+            }, 800);
         }
 
         // ===== MOBILE INPUT FORMATTING =====
@@ -566,6 +590,13 @@
             let digits = this.value.replace(/\D/g, '');
             if (digits.length > 11) digits = digits.slice(0, 11);
             this.value = digits;
+        });
+
+        // ===== KEYBOARD SHORTCUT: ESC to close modal =====
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
         });
     </script>
 
