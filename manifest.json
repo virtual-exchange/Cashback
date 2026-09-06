@@ -9,7 +9,7 @@
   "theme_color": "#041024",
   "icons": [
     {
-      "src": "photos/gc_icon.png",
+      "src": "photos/iva2.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
@@ -33,7 +33,7 @@
       "name": "Get Cashback",
       "short_name": "Cashback",
       "description": "Get your cashback now!",
-      "url": "/Prizes/",
+      "url": "/Cashback/",
       "icons": [
         {
           "src": "photos/iva2.png",
