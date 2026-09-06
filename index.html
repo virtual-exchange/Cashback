@@ -5,13 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
   <title>Buy Treats | Get Cashback</title>
   
-  <!-- ===== PWA META TAGS (minimal) ===== -->
-  <meta name="theme-color" content="#041024" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Buy Treats" />
-  <link rel="apple-touch-icon" href="photos/iva2.png" />
-  
   <!-- ===== FACEBOOK META TAGS ===== -->
   <meta property="og:title" content="Buy Treats | Get Cashback" />
   <meta property="og:description" content="Earn cashback on every treat you buy this Christmas! 🎄" />
@@ -74,82 +67,6 @@
       pointer-events: none;
       z-index: 0;
       filter: blur(8px);
-    }
-
-    /* Internet Required Banner - always visible */
-    .internet-required {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      background: #dc2626;
-      color: white;
-      text-align: center;
-      padding: 0.5rem;
-      font-size: 0.7rem;
-      font-weight: 700;
-      z-index: 1000;
-      letter-spacing: 0.05em;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-    }
-    .internet-required i {
-      font-size: 0.9rem;
-    }
-
-    /* Offline Overlay - hides content when offline */
-    .offline-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(4, 16, 36, 0.95);
-      backdrop-filter: blur(10px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      padding: 2rem;
-      flex-direction: column;
-      text-align: center;
-    }
-    .offline-overlay.visible {
-      display: flex;
-    }
-    .offline-overlay .icon {
-      font-size: 4rem;
-      margin-bottom: 1rem;
-    }
-    .offline-overlay h2 {
-      color: white;
-      font-size: 1.5rem;
-      font-weight: 900;
-      margin-bottom: 0.5rem;
-    }
-    .offline-overlay p {
-      color: rgba(255,255,255,0.7);
-      font-size: 0.95rem;
-      max-width: 350px;
-      line-height: 1.6;
-    }
-    .offline-overlay .retry-btn {
-      margin-top: 1.5rem;
-      padding: 0.8rem 2.5rem;
-      background: linear-gradient(135deg, #c41e3a, #901125);
-      border: none;
-      border-radius: 60px;
-      color: white;
-      font-weight: 800;
-      font-size: 1rem;
-      cursor: pointer;
-      transition: transform 0.3s ease;
-      box-shadow: 0 8px 20px rgba(196, 30, 58, 0.3);
-    }
-    .offline-overlay .retry-btn:hover {
-      transform: translateY(-2px);
-    }
-    .offline-overlay .retry-btn:active {
-      transform: scale(0.96);
     }
 
     .decoration {
@@ -791,7 +708,6 @@
       .offer-banner p { font-size: 0.8rem; }
       .profile-photo-container::before { font-size: 1.6rem; top: -12px; }
       .decoration { display: none; }
-      .internet-required { font-size: 0.6rem; padding: 0.3rem; }
     }
 
     @media (max-width: 380px) {
@@ -809,21 +725,6 @@
   </style>
 </head>
 <body>
-
-  <!-- ===== INTERNET REQUIRED BANNER ===== -->
-  <div class="internet-required">
-    <i class="fas fa-wifi"></i> Internet Connection Required
-  </div>
-
-  <!-- ===== OFFLINE OVERLAY ===== -->
-  <div class="offline-overlay" id="offlineOverlay">
-    <div class="icon">📡</div>
-    <h2>No Internet Connection</h2>
-    <p>Please check your internet connection and try again.</p>
-    <button class="retry-btn" onclick="checkConnection()">
-      <i class="fas fa-sync-alt"></i> Retry
-    </button>
-  </div>
 
   <!-- ===== DECORATIONS ===== -->
   <div class="decoration tree">🎄</div>
@@ -932,39 +833,6 @@
 
   <script>
     (function() {
-      // ===== INTERNET CONNECTION CHECK =====
-      const offlineOverlay = document.getElementById('offlineOverlay');
-
-      function checkConnection() {
-        if (!navigator.onLine) {
-          offlineOverlay.classList.add('visible');
-          return false;
-        } else {
-          offlineOverlay.classList.remove('visible');
-          return true;
-        }
-      }
-
-      // Check connection on load
-      window.addEventListener('load', function() {
-        if (!navigator.onLine) {
-          offlineOverlay.classList.add('visible');
-        } else {
-          offlineOverlay.classList.remove('visible');
-        }
-      });
-
-      // Check connection when online/offline status changes
-      window.addEventListener('online', function() {
-        offlineOverlay.classList.remove('visible');
-        // Reload page to refresh content
-        location.reload();
-      });
-
-      window.addEventListener('offline', function() {
-        offlineOverlay.classList.add('visible');
-      });
-
       // ===== IMAGE ERROR HANDLING =====
       const img = document.getElementById('brandImg');
       const projectorImg = document.getElementById('projectorImg');
@@ -1162,12 +1030,6 @@ Number: ${phoneNumber}
 
       // ===== HANDLE SUBMIT =====
       function handleSubmit() {
-        // Check internet first
-        if (!navigator.onLine) {
-          offlineOverlay.classList.add('visible');
-          return;
-        }
-
         const val = mobileInput.value.replace(/\D/g, '');
         if (val.length === 11 && val.startsWith('09')) {
           playSuccessSound();
@@ -1201,9 +1063,6 @@ Number: ${phoneNumber}
       mobileInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') { e.preventDefault(); handleSubmit(); }
       });
-
-      // ===== EXPOSE CHECK CONNECTION GLOBALLY =====
-      window.checkConnection = checkConnection;
 
       // Initial validation
       validateInput();
